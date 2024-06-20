@@ -1,0 +1,22 @@
+DB:
+  Host: "localhost"
+  Port: "5432"
+  User: "postgres"
+  Password: "25102002"
+  DBName: "UrlShortener"
+  SSLMode: "disable"
+
+Redis:
+  Addr: "localhost:6379"
+  Password: ""
+  DB: 0
+
+Server:
+  Port: "8080"
+
+Session:
+  SecretKey: "khanh"
+  MaxAge: 86400
+
+JWT:
+  SecretKey: "khanh"
