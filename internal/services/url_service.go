@@ -15,10 +15,6 @@ type URLService struct {
 	Cache *redis.Client
 }
 
-func NewPostgres(db *sqlx.DB) *URLService {
-	return &URLService{DB: db}
-}
-
 func (repo *URLService) SaveUrl(originalUrl string, shortendUrl string, userid uuid.UUID) (*models.Url, error) {
 	url := &models.Url{
 		ID:            uuid.New(),
