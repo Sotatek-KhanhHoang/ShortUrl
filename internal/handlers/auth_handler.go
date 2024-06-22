@@ -60,7 +60,7 @@ func (h *AuthHandler) Login(c *gin.Context) {
 
 	http.SetCookie(c.Writer, &cookie)
 
-	c.Header("Authorization", tokenS)
+	c.Header("Authorization", "Bearer "+tokenS)
 
 	c.JSON(http.StatusOK, gin.H{"message": tokenS})
 }

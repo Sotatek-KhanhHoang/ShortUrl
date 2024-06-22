@@ -3,8 +3,8 @@ package models
 import "github.com/google/uuid"
 
 type Url struct {
-	ID            uuid.UUID `db:"id"`
-	Original_url  string    `db:"original_url"`
-	Shortened_url string    `db:"shortened_url"`
-	UserId        uuid.UUID `db:"user_id"`
+	ID            uuid.UUID `json:"id" db:"id"`
+	Original_url  string    `json:"original_url" db:"original_url"`
+	Shortened_url string    `json:"shortened_url" db:"shortened_url"`
+	UserId        uuid.UUID `json:"user_id" db:"user_id"`
 }

@@ -18,26 +18,39 @@ func SetupRouter(authService *services.AuthService, urlService *services.URLServ
 	{
 		auth.POST("/login", authHandler.Login)
 		auth.POST("/register", authHandler.Register)
+		auth.GET("/:shortenedURL", urlHandler.Redirect)
 	}
 
 	api := r.Group("/api")
-	api.Use(authMiddleware(authService))
+	api.Use(authMiddleware())
 	{
 		api.POST("/shorten", urlHandler.CreateShortenUrl)
 	}
 	return *r
 }
 
-func authMiddleware(authService *services.AuthService) gin.HandlerFunc {
+func authMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		tokenString := c.GetHeader("Authorization")
-		userID, err := handlers.ValidateToken(tokenString)
-		if err != nil {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+
+		if tokenString == "" {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Authorization header not found"})
 			c.Abort()
 			return
 		}
-		c.Set("userID", userID.String())
+
+		// Nếu sử dụng schema "Bearer", tách token ra
+		if len(tokenString) > 7 && tokenString[:7] == "Bearer " {
+			tokenString = tokenString[7:]
+		}
+
+		userID, err := handlers.ValidateToken(tokenString)
+		if err != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorizeed"})
+			c.Abort()
+			return
+		}
+		c.Set("userID", userID)
 		c.Next()
 	}
 }

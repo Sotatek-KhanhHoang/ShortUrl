@@ -15,25 +15,42 @@ type URLService struct {
 	Cache *redis.Client
 }
 
-func (repo *URLService) SaveUrl(originalUrl string, shortendUrl string, userid uuid.UUID) (*models.Url, error) {
+func (s *URLService) SaveUrl(original_url string, shortened_url string, user_id uuid.UUID) (string, error) {
+
 	url := &models.Url{
 		ID:            uuid.New(),
-		Original_url:  originalUrl,
-		Shortened_url: shortendUrl,
-		UserId:        userid,
+		Original_url:  original_url,
+		Shortened_url: shortened_url,
+		UserId:        user_id,
 	}
 
-	_, err := repo.DB.NamedExec(`INSERT INTO urls (id, original_url, shortened_url, user_id) 
-							VALUES (:id, :originalUrl, :shortendUrl, :userid")`, url)
+	_, err := s.DB.NamedExec(`INSERT INTO urls (id, original_url, shortened_url, user_id) 
+	VALUES (:id, :original_url, :shortened_url, :user_id)`, url)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
-	repo.Cache.Set(context.Background(), shortendUrl, originalUrl, 0)
+	s.Cache.Set(context.Background(), shortened_url, original_url, 0)
 
-	return url, nil
+	return shortened_url, nil
 }
 
-func (repo *URLService) GetUrlById(userid uuid.UUID) (string, error) {
-	return "", nil
+func (s *URLService) GetOriginalURL(shortenedURL string) (string, error) {
+	// Kiểm tra Redis
+	originalURL, err := s.Cache.Get(context.Background(), shortenedURL).Result()
+	if err == redis.Nil {
+		// Kiểm tra Postgres
+		var url models.Url
+		err := s.DB.Get(&url, "SELECT original_url FROM urls WHERE shortened_url=$1", shortenedURL)
+		if err != nil {
+			return "", err
+		}
+		originalURL = url.Original_url
+		// Lưu lại vào Redis
+		s.Cache.Set(context.Background(), shortenedURL, originalURL, 0)
+	} else if err != nil {
+		return "", err
+	}
+
+	return originalURL, nil
 }
