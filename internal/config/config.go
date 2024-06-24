@@ -7,11 +7,11 @@ import (
 )
 
 type Config struct {
-	DB      DatabaseConfig
-	Redis   RedisConfig
-	Server  ServerConfig
-	Session SessionConfig
-	JWT     JWTConfig
+	DB     DatabaseConfig
+	Redis  RedisConfig
+	Server ServerConfig
+	URL    SessionConfig
+	JWT    JWTConfig
 }
 
 type DatabaseConfig struct {

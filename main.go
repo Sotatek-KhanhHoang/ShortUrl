@@ -16,7 +16,7 @@ func main() {
 	authService := &services.AuthService{DB: db}
 	urlService := &services.URLService{DB: db, Cache: redisClient}
 
-	r := routes.SetupRouter(authService, urlService)
+	r := routes.SetupRouter(authService, urlService, redisClient)
 
 	r.Run(":" + config.AppConfig.Server.Port)
 }
