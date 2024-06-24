@@ -50,7 +50,7 @@ func (h *AuthHandler) Login(c *gin.Context) {
 		return
 	}
 
-	cookie := http.Cookie{
+	/*cookie := http.Cookie{
 		Name:     "user_id",
 		Value:    tokenS,
 		Expires:  time.Now().Add(24 * time.Hour),
@@ -58,7 +58,7 @@ func (h *AuthHandler) Login(c *gin.Context) {
 		Path:     "/",
 	}
 
-	http.SetCookie(c.Writer, &cookie)
+	http.SetCookie(c.Writer, &cookie)*/
 
 	c.Header("Authorization", "Bearer "+tokenS)
 
